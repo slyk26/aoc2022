@@ -3,7 +3,7 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 
 fn get_elves() -> BTreeMap<i32, usize> {
-    let file = File::open("./src/days/day1.txt").unwrap();
+    let file = File::open("./src/input/day1.txt").unwrap();
     let reader = BufReader::new(file);
     let mut elves:BTreeMap<i32, usize> = BTreeMap::new();
 
