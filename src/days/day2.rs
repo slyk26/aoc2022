@@ -5,14 +5,7 @@
 // DRAW => 3
 // LOSE => 0
 
-use std::fs::File;
-use std::io::{BufRead, BufReader};
-
-fn read_file() -> Vec<String> {
-    let file = File::open("./src/input/day2.txt").unwrap();
-    let reader = BufReader::new(file);
-    reader.lines().collect::<Result<_, _>>().unwrap()
-}
+use crate::util::read_file;
 
 fn lookup(key: &str) -> i32 {
     match key {
@@ -27,7 +20,7 @@ fn lookup(key: &str) -> i32 {
 pub fn part1() {
     let mut score = 0;
 
-    for line in read_file().iter() {
+    for line in read_file("./src/input/day2.txt").iter() {
         let game = line.split(" ").collect::<Vec<&str>>();
 
         let elf = lookup(game.get(0).unwrap());
@@ -56,12 +49,12 @@ pub fn part1() {
 pub fn part2() {
     let mut score = 0;
 
-    for line in read_file().iter() {
+    for line in read_file("./src/input/day2.txt").iter() {
         let game = line.split(" ").collect::<Vec<&str>>();
 
         let elf = lookup(game.get(0).unwrap());
         let outcome = game.get(1).unwrap();
-        let mut result = 0;
+        let mut result;
 
         match *outcome {
             "Y" => {
@@ -93,5 +86,5 @@ pub fn part2() {
         score += result;
     }
 
-    println!("Part 2 R/P/S{}", score);
+    println!("Part 2 R/P/S: {}", score);
 }
