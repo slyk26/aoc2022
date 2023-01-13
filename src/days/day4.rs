@@ -1,3 +1,4 @@
+use std::cmp::{max, min};
 use std::str::FromStr;
 use crate::util::read_file;
 
@@ -34,8 +35,7 @@ pub fn part2() {
     for line in read_file("./src/input/day4.txt") {
         let (lower_bound_l, upper_bound_l, lower_bound_r, upper_bound_r) = get_bounds_of_line(&line);
 
-        if lower_bound_r <= upper_bound_l && lower_bound_r >= lower_bound_l ||
-            lower_bound_l <= upper_bound_r && lower_bound_l >= lower_bound_r {
+        if max(lower_bound_l, lower_bound_r) <= min(upper_bound_l, upper_bound_r){
             count += 1;
         }
     }
