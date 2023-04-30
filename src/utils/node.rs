@@ -1,3 +1,4 @@
+use std::collections::VecDeque;
 use std::fmt::{Display, Formatter};
 use std::ptr::NonNull;
 
@@ -29,6 +30,33 @@ impl<T> Node<T> where T: Display + PartialEq {
         child.parent = Some(NonNull::from(&*self));
         self.children.push(child);
     }
+
+    fn bfs(&self, f: impl Fn(&Node<T>)) {
+        let mut q = VecDeque::new();
+        q.push_back(self);
+
+        while let Some(t) = q.pop_front() {
+            (f)(&t);
+            for child in &t.children {
+                q.push_back(child);
+            }
+        }
+    }
+
+    pub fn print(&self) {
+        self.bfs(|node| println!("{}", node));
+    }
+
+    pub fn find(&self, value: T) -> Option<&Node<T>> {
+        let mut ret = None;
+        self.bfs(| node| {
+            if node.value == value {
+                ret = Some(node);
+            }
+        });
+        ret
+    }
+
 }
 
 impl<T> Display for Node<T> where T: Display + PartialEq {

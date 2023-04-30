@@ -1,5 +1,4 @@
-use crate::utils::generic::node::Node;
-use crate::utils::generic::tree::Tree;
+use crate::utils::node::Node;
 
 mod days;
 mod utils;
@@ -24,9 +23,5 @@ fn main() {
     node2.add_child(Node::new(25));
     root.add_child(Node::new(30));
     root.add_child(node2);
-    let tree = Tree::from(&root);
 
-    if let Some(node) = tree.find(30) {
-        println!("{}", node);
-    }
 }
