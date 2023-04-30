@@ -5,7 +5,7 @@
 // DRAW => 3
 // LOSE => 0
 
-use crate::util::read_file;
+use crate::utils::helper::*;
 
 fn lookup(key: &str) -> i32 {
     match key {

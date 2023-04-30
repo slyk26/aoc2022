@@ -1,5 +1,5 @@
 use std::collections::HashSet;
-use crate::util::read_file;
+use crate::utils::helper::*;
 
 pub fn part1() {
     let mut sum = 0;

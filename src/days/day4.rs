@@ -1,6 +1,6 @@
 use std::cmp::{max, min};
 use std::str::FromStr;
-use crate::util::read_file;
+use crate::utils::helper::*;
 
 fn get_bounds_of_line(line: &String) -> (i32, i32, i32, i32) {
     let elves: Vec<String> = line.split(",").map(|s| s.to_string()).collect();

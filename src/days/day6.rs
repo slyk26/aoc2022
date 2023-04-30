@@ -1,4 +1,4 @@
-use crate::util::read_file;
+use crate::utils::helper::*;
 
 pub fn part1() {
     do_magic(4);

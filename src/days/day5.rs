@@ -1,5 +1,5 @@
 use std::collections::VecDeque;
-use crate::util::read_file;
+use crate::utils::helper::*;
 
 pub fn part1() {
     solve_with(crate_mover9000);
