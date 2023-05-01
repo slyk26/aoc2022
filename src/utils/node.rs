@@ -35,6 +35,13 @@ impl<T> Node<T> where T: PartialEq + Debug {
     pub fn print(&self) {
         self.pointer.print();
     }
+
+    pub fn find(&self, value: &T) -> Option<Node<T>> {
+        if let Some(found) = self.pointer.find(&value) {
+            return Some(Node::from(&found));
+        }
+        None
+    }
 }
 
 #[derive(Debug)]
@@ -74,7 +81,14 @@ impl<T> RawNode<T> where T: PartialEq + Debug {
         *child.parent.borrow_mut() = Rc::downgrade(parent);
     }
 
-    fn find(&self, value: T) {
-        // TODO
+    pub fn find(self: &Rc<Self>, value: &T) -> Option<Rc<RawNode<T>>> {
+        if self.value() == value {
+            return Some(self.clone());
+        } else {
+            for i in 0..self.children.borrow().len() {
+                return RawNode::find(self.children().borrow().get(i).unwrap(), &value);
+            }
+        }
+        None
     }
 }
