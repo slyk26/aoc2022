@@ -1,14 +1,13 @@
-use crate::utils::node::{SharedNode};
-
+use crate::utils::node::{Node};
 mod days;
 mod utils;
 
 fn main() {
-    let root = SharedNode::new(10);
+    let root = Node::new(10);
 
-    let ayyy = SharedNode::new(20);
-    
+    let ayyy = Node::new(20);
+
     root.add_child(&ayyy);
 
-    root.print();
+    println!("{:?}", ayyy.parent());
 }
