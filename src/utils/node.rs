@@ -1,78 +1,63 @@
-use std::collections::VecDeque;
-use std::fmt::{Display, Formatter};
-use std::ptr::NonNull;
+use std::fmt::Debug;
+use std::rc::{Rc, Weak};
+use std::cell::{RefCell};
 
-pub(crate) struct Node<T> where T: Display + PartialEq {
-    value: T,
-    parent: Option<NonNull<Node<T>>>,
-    children: Vec<Node<T>>,
+#[derive(Debug)]
+pub struct SharedNode<T> where T: PartialEq + Debug {
+    pointer: Rc<Node<T>>,
 }
 
-#[allow(unused)]
-impl<T> Node<T> where T: Display + PartialEq {
+impl<T> SharedNode<T> where T: PartialEq + Debug {
     pub fn new(value: T) -> Self {
-        Self { value, children: Vec::new(), parent: None }
+        SharedNode { pointer: Rc::new(Node::new(value)) }
     }
 
-    pub fn value(&self) -> &T {
-        &self.value
-    }
-
-    pub fn parent(&self) -> &Option<NonNull<Node<T>>> {
-        &self.parent
-    }
-
-    pub fn children(&self) -> &Vec<Node<T>> {
-        &self.children
-    }
-
-    pub fn add_child(&mut self, mut child: Node<T>) {
-        child.parent = Some(NonNull::from(&*self));
-        self.children.push(child);
-    }
-
-    fn bfs(&self, f: impl Fn(&Node<T>)) {
-        let mut q = VecDeque::new();
-        q.push_back(self);
-
-        while let Some(t) = q.pop_front() {
-            (f)(&t);
-            for child in &t.children {
-                q.push_back(child);
-            }
-        }
+    pub fn add_child(&self, child: &SharedNode<T>) {
+        Node::add_child(&self.pointer, &child.pointer);
     }
 
     pub fn print(&self) {
-        self.bfs(|node| println!("{}", node));
+        self.pointer.print();
     }
-
-    pub fn find(&self, value: T) -> Option<&Node<T>> {
-        let mut ret = None;
-        self.bfs(| node| {
-            if node.value == value {
-                ret = Some(node);
-            }
-        });
-        ret
-    }
-
 }
 
-impl<T> Display for Node<T> where T: Display + PartialEq {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        unsafe {
-            if let Some(parent) = self.parent {
-                write!(f, "Parent({}) Node({})", parent.as_ref().value, self.value)
-            } else {
-                write!(f, "Node({})", self.value)
-            }
+#[derive(Debug)]
+struct Node<T> where T: PartialEq + Debug {
+    value: T,
+    parent: RefCell<Weak<Node<T>>>,
+    children: RefCell<Vec<Rc<Node<T>>>>,
+}
+
+impl<T> Node<T> where T: PartialEq + Debug {
+    fn new(value: T) -> Self {
+        Node { value, parent: RefCell::new(Weak::new()), children: RefCell::new(vec![]) }
+    }
+
+    fn value(&self) -> &T {
+        &self.value
+    }
+
+    fn parent(&self) -> Option<Rc<Node<T>>> {
+        self.parent.borrow().upgrade()
+    }
+
+    fn children(&self) -> &RefCell<Vec<Rc<Node<T>>>> {
+        &self.children
+    }
+
+    fn print(&self) {
+        println!("{:?}", self);
+        for i in 0..self.children.borrow().len() {
+            Node::print(&self.children().borrow().get(i).unwrap());
         }
     }
-}
 
-impl<T> PartialEq for Node<T> where T: Display + PartialEq {
-    fn eq(&self, other: &Self) -> bool {
-        self.value == other.value
+    fn add_child(parent: &Rc<Node<T>>, child: &Rc<Node<T>>) {
+        parent.children.borrow_mut().push(Rc::clone(child));
+        *child.parent.borrow_mut() = Rc::downgrade(&parent);
+    }
+
+    fn find(&self, value: T) {
+        // TODO
     }
 }
